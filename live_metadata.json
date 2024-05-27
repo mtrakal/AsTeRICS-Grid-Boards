@@ -38,6 +38,16 @@
       "BASIC_COMMUNICATION",
       "4x5"
     ],
+    "images": [
+      "live/AsTeRICS Grid default/1.jpg",
+      "live/AsTeRICS Grid default/2.jpg",
+      "live/AsTeRICS Grid default/3.jpg",
+      "live/AsTeRICS Grid default/4.jpg",
+      "live/AsTeRICS Grid default/5.jpg",
+      "live/AsTeRICS Grid default/6.jpg",
+      "live/AsTeRICS Grid default/thumbnail.jpg"
+    ],
+    "thumbnail": "live/AsTeRICS Grid default/thumbnail.jpg",
     "path": "live/AsTeRICS Grid default/default.grd.json"
   },
   {
