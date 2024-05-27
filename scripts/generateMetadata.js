@@ -50,7 +50,7 @@ async function folderToMetadata(folder, options = {
     if (imageFiles.length > 0) {
         let suffix = imageFiles[0].name.substring(imageFiles[0].name.lastIndexOf('.'));
         let thumbnailFilename = THUMBNAIL_FILENAME + suffix;
-        imageFiles.filter(e => e.name !== thumbnailFilename);
+        imageFiles = imageFiles.filter(e => e.name !== thumbnailFilename);
         imageFiles.sort((a, b) => a.name.localeCompare(b.name));
         infoContent.images = imageFiles.map(e => `${options.baseFolder}/${folder.name}/${e.name}`);
         let outputPath = path.join(__dirname, "..", options.baseFolder, folder.name, thumbnailFilename)
