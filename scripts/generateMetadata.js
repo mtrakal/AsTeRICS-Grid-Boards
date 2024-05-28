@@ -1,35 +1,52 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-const BASE_FOLDER = "live"
-const startFolder = path.join(__dirname, "..", BASE_FOLDER);
+const BASE_FOLDER_COMM = "communicators"
+const BASE_FOLDER_BOARDS = "boards"
+const startPathCommunicators = path.join(__dirname, "..", BASE_FOLDER_COMM);
+const startPathBoards = path.join(__dirname, "..", BASE_FOLDER_BOARDS);
 const INFO_FILENAME = "info.json";
 const OUTPUT_FILENAME = "live_metadata.json";
 const THUMBNAIL_FILENAME = "thumbnail";
 
-let rootFolders = fs.readdirSync(startFolder, {withFileTypes: true}).filter(e => e.isDirectory());
+let rootFoldersCommunicators = fs.readdirSync(startPathCommunicators, {withFileTypes: true}).filter(e => e.isDirectory());
+let rootFoldersBoards = fs.readdirSync(startPathBoards, {withFileTypes: true}).filter(e => e.isDirectory());
 let metadataObjects = [];
 
 main();
 
 async function main() {
-    for (let rootFolder of rootFolders) {
-        let newObjects = await folderToMetadata(rootFolder);
+    for (let rootFolder of rootFoldersCommunicators) {
+        let newObjects = await folderToMetadata(rootFolder, {
+            baseFolder: BASE_FOLDER_COMM, defaultProps: { selfContained: true }
+        });
+        metadataObjects = metadataObjects.concat(newObjects);
+    }
+    for (let rootFolder of rootFoldersBoards) {
+        let newObjects = await folderToMetadata(rootFolder, {
+            baseFolder: BASE_FOLDER_BOARDS, defaultProps: { selfContained: false }
+        });
         metadataObjects = metadataObjects.concat(newObjects);
     }
     fs.writeFileSync(path.join(__dirname, "..", OUTPUT_FILENAME), JSON.stringify(metadataObjects));
     console.log(`Successfully written ${metadataObjects.length} elements to ${OUTPUT_FILENAME}!`)
 }
 
-async function folderToMetadata(folder, options = {
-    needsInfoFile: true
-}) {
-    options.baseFolder = options.baseFolder || BASE_FOLDER;
-    if (!folder) {
+async function folderToMetadata(folder, options = {}) {
+    options.needsInfoFile = options.needsInfoFile === undefined ? true : false;
+    options.defaultProps = options.defaultProps || {};
+    if (!folder || !options.baseFolder) {
+        console.warn('missing parameters!');
         return null;
     }
     let currentPath = path.join(folder.path, folder.name);
     let folderContents = fs.readdirSync(currentPath, { withFileTypes: true });
+    for (let content of folderContents) {
+        if (content.name.endsWith('.grd')) {
+            fs.renameSync(path.join(content.path, content.name), path.join(content.path, content.name.replaceAll('.grd', '.grd.json')));
+        }
+    }
+    folderContents = fs.readdirSync(currentPath, { withFileTypes: true });
     let langCodeFolders = folderContents.filter(e => e.isDirectory() && e.name.length == 2);
     let infoFile = folderContents.find(e => e.name === INFO_FILENAME);
     let grdFiles = folderContents.filter(e => e.name.endsWith(".grd.json") || e.name.endsWith(".grd"));
@@ -43,6 +60,7 @@ async function folderToMetadata(folder, options = {
         let infoContentString = fs.readFileSync(path.join(infoFile.path, infoFile.name), 'utf-8');
         infoContent = JSON.parse(infoContentString);
     }
+    Object.assign(infoContent, options.defaultProps);
     if (grdFiles.length > 1) {
         console.warn(`more than 1 .grd file in "${folder.name}"!`);
         return null;
@@ -69,17 +87,26 @@ async function folderToMetadata(folder, options = {
             let langCode = langFolder.name.toLocaleLowerCase();
             let subInfos = await folderToMetadata(langFolder, {
                 baseFolder: `${options.baseFolder}/${folder.name}`,
-                needsInfoFile: !infoFile
+                needsInfoFile: !infoFile,
+                defaultProps: options.defaultProps
             });
             let subInfo = subInfos ? subInfos[0] : {};
             subInfo.languages = subInfo.languages || [langCode];
             let infoContentCopy = JSON.parse(JSON.stringify(infoContent));
             Object.assign(infoContentCopy, subInfo);
-            if (!isString(infoContentCopy.description)) {
+            if (infoContentCopy.description && !isString(infoContentCopy.description)) {
                 for (let lang of Object.keys(infoContent.description)) {
                     let langLower = lang.toLocaleLowerCase();
                     if (langLower !== langCode && langLower !== 'en') {
                         delete infoContentCopy.description[lang];
+                    }
+                }
+            }
+            if (infoContentCopy.name && !isString(infoContentCopy.name)) {
+                for (let lang of Object.keys(infoContent.name)) {
+                    let langLower = lang.toLocaleLowerCase();
+                    if (langLower !== langCode && langLower !== 'en') {
+                        delete infoContentCopy.name[lang];
                     }
                 }
             }
