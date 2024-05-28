@@ -60,7 +60,7 @@ async function folderToMetadata(folder, options = {
         infoContent.thumbnail = `${options.baseFolder}/${folder.name}/${thumbnailFilename}`;
     }
     if (grdFiles.length === 1) {
-        infoContent.path = `${options.baseFolder}/${folder.name}/${grdFiles[0].name}`;
+        infoContent.url = `${options.baseFolder}/${folder.name}/${grdFiles[0].name}`;
         return [infoContent];
     }
     if (langCodeFolders.length > 0) {
