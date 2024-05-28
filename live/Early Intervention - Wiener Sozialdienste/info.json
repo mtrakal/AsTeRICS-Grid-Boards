@@ -11,5 +11,6 @@
     "de": "Konfiguration für Kommunikation im Kontext von Frühförderung. Entwickelt vom Team der mobilen Frühförderung der Wiener Sozialdienste in Wien."
   },
   "wordPrediction": false,
-  "tags": ["BASIC_COMMUNICATION", "EARLY_INTERVENTION"]
+  "tags": ["BASIC_COMMUNICATION", "EARLY_INTERVENTION"],
+  "selfContained": true
 }

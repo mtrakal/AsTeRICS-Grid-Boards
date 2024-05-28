@@ -11,5 +11,6 @@
     "de": "Konfiguration für Kommunikation im Krankenhaus-Kontext. Entwickelt vom Dachverband der Wiener Sozialeinrichtungen gemeinsam mit der Klinik Floridsdorf in Wien."
   },
   "wordPrediction": true,
-  "tags": ["BASIC_COMMUNICATION", "MEDICAL", "HOSPITAL"]
+  "tags": ["BASIC_COMMUNICATION", "MEDICAL", "HOSPITAL"],
+  "selfContained": true
 }

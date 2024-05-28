@@ -16,5 +16,6 @@
   },
   "standardFor": ["en", "es", "ca", "gl", "eu", "it"],
   "wordPrediction": true,
-  "tags": ["ARASAAC", "COMMUNICATOR"]
+  "tags": ["ARASAAC", "COMMUNICATOR"],
+  "selfContained": true
 }

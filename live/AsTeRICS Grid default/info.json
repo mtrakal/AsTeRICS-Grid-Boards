@@ -9,5 +9,6 @@
   },
   "standardFor": ["de"],
   "wordPrediction": true,
-  "tags": ["BASIC_COMMUNICATION", "4x5"]
+  "tags": ["BASIC_COMMUNICATION", "4x5"],
+  "selfContained": true
 }
